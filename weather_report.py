@@ -9,10 +9,9 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error, r2_score
 
-# ── Page config ───────────────────────────────────────────────────────────────
+
 st.set_page_config(page_title="Weather Report Analysis", layout="wide")
 
-# ── Animated rainy weather background ─────────────────────────────────────────
 st.markdown("""
 <style>
 /* 🌧️ Animated Rainy Weather Background */
@@ -113,11 +112,9 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Title ─────────────────────────────────────────────────────────────────────
 st.title("🌧️ Weather Report Analysis")
 st.markdown("**6 Years of Daily Weather Data (2020–2025) · 8 Major Indian Cities**")
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
 st.sidebar.header("Navigation")
 page = st.sidebar.radio(
     "Select Page",
@@ -125,8 +122,6 @@ page = st.sidebar.radio(
      "Rainfall Analysis", "Statistics", "🔮 Predictions"]
 )
 
-# (Keep your existing data, ML, and visualization logic unchanged below)
-# ── Constants ─────────────────────────────────────────────────────────────────
 cities = ["Mumbai", "Delhi", "Bangalore", "Chennai",
           "Kolkata", "Hyderabad", "Pune", "Jaipur"]
 
@@ -144,8 +139,6 @@ CITY_CONFIG = {
 MONTH_LABELS = ["Jan","Feb","Mar","Apr","May","Jun",
                 "Jul","Aug","Sep","Oct","Nov","Dec"]
 T = "plotly_dark"
-
-# ── Data ──────────────────────────────────────────────────────────────────────
 @st.cache_data
 def build_dataframe():
     np.random.seed(42)
@@ -189,7 +182,7 @@ def build_dataframe():
 
 df = build_dataframe()
 
-# ── ML — no DataFrame argument passed to avoid st.cache_resource hashing bug ─
+
 @st.cache_resource
 def train_models():
     _df = build_dataframe()
@@ -220,9 +213,8 @@ def train_models():
 
 models, le, model_scores = train_models()
 
-# ════════════════════════════════════════════════════════════════════════════
 # DASHBOARD
-# ════════════════════════════════════════════════════════════════════════════
+
 if page == "Dashboard":
     st.header("📊 Dashboard Overview")
 
@@ -261,9 +253,7 @@ if page == "Dashboard":
     fig2.update_layout(height=420)
     st.plotly_chart(fig2, use_container_width=True)
 
-# ════════════════════════════════════════════════════════════════════════════
-# TEMPERATURE ANALYSIS — distribution histogram removed
-# ════════════════════════════════════════════════════════════════════════════
+# TEMPERATURE ANALYSIS 
 elif page == "Temperature Analysis":
     st.header("🌡️ Temperature Analysis")
 
@@ -292,9 +282,8 @@ elif page == "Temperature Analysis":
     fig.update_layout(height=420, hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True)
 
-# ════════════════════════════════════════════════════════════════════════════
-# HUMIDITY ANALYSIS — distribution histogram removed
-# ════════════════════════════════════════════════════════════════════════════
+# HUMIDITY ANALYSIS 
+
 elif page == "Humidity Analysis":
     st.header("💧 Humidity Analysis")
 
@@ -324,9 +313,8 @@ elif page == "Humidity Analysis":
     fig.update_layout(height=420, hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True)
 
-# ════════════════════════════════════════════════════════════════════════════
-# RAINFALL ANALYSIS — distribution fixed + heatmap colours fixed
-# ════════════════════════════════════════════════════════════════════════════
+# RAINFALL ANALYSIS 
+
 elif page == "Rainfall Analysis":
     st.header("🌧️ Rainfall Analysis")
 
@@ -343,7 +331,7 @@ elif page == "Rainfall Analysis":
     fig.update_layout(height=420, coloraxis_showscale=False)
     st.plotly_chart(fig, use_container_width=True)
 
-    # ── Rainfall distribution — faceted, one panel per city ──────────────────
+    # Rainfall distribution 
     st.subheader("Rainfall Distribution per City (rainy days only)")
     rain_only = dff[dff["Rainfall"] > 0].copy()
     bins   = [0, 5, 15, 30, 50, 80, 120]
@@ -362,7 +350,7 @@ elif page == "Rainfall Analysis":
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
     st.plotly_chart(fig, use_container_width=True)
 
-    # ── Monthly Rainfall Heatmap — warm scale + cell values shown ────────────
+    #Monthly Rainfall Heatmap 
     st.subheader("Monthly Rainfall Heatmap")
     heat  = dff.groupby(["City","Month"])["Rainfall"].mean().reset_index()
     pivot = heat.pivot(index="City", columns="Month", values="Rainfall").round(1)
@@ -390,9 +378,8 @@ elif page == "Rainfall Analysis":
     fig.update_layout(height=420, hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True)
 
-# ════════════════════════════════════════════════════════════════════════════
 # STATISTICS
-# ════════════════════════════════════════════════════════════════════════════
+
 elif page == "Statistics":
     st.header("📈 Weather Statistics")
 
@@ -406,9 +393,8 @@ elif page == "Statistics":
                      use_container_width=True)
         st.divider()
 
-# ════════════════════════════════════════════════════════════════════════════
-# PREDICTIONS — fixed by removing df argument from train_models()
-# ════════════════════════════════════════════════════════════════════════════
+# PREDICTIONS 
+
 elif page == "🔮 Predictions":
     st.header("🔮 Weather Predictions")
     st.markdown(
